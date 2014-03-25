@@ -7,4 +7,4 @@
 
 * [1] De novo assembly and genotyping of variants using colored de Bruijn graphs. Iqbal Z, Caccamo M, Turner I, Flicek P, McVean G. Nature Genetics. 2012 Feb; 44(2):226-32
 * [2] Identifying and classifying trait linked polymorphisms in non reference species by walking coloured de Bruijn graphs Leggett R, et al, plos one, 2013.
-* [3] Reda Younsi et al,: Detecting single nucleotide polymorphisms in complex portions of k-mer graphs. Bioinformatics, 2014 (submitted).
+* [3] Detecting single nucleotide polymorphisms in complex portions of k-mer graphs. Reda Younsi et al, Bioinformatics, 2014 (submitted).
