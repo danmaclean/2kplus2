@@ -17,9 +17,8 @@
 #include <algorithm>
 #include <sstream>
 #include <ctime>
-#include "C:\Users\reda\Desktop\randomc\randomc.h"
-//#include "C:\Users\reda\Desktop\randomc\mersenne.cpp"
-//#include "C:\Users\reda\Desktop\randomc\userintf.cpp"
+#include "randomc/randomc.h"
+#include "randomc/mersenne.cpp"
 #include <stdio.h>
 #include <time.h>
 
