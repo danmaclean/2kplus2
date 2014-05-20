@@ -1,3 +1,5 @@
+![https://zenodo.org/badge/doi/10.5281/zenodo.10008.png](https://zenodo.org/badge/doi/10.5281/zenodo.10008.png)
+
 # 2kplus2
 
 2kplus2 is a new algorithm that search graphs produced from an in-house assembler called cortex [1]. The 2k+2 algorithm use concepts taken from the graph theory in order to search for possible SNPs. Cortex uses de bruijn graphs to assemble genomes from sequencing reads, and in the process, an interesting phenomenon emerges from these graphs in the shape of "bubbles" [1]. These bubbles maybe a formulation of potential SNPs and Indels which, if found in the graph, can be extracted for further analysis [2]. The proposed algorithm construct a simplified undirected graph from the cortex's de bruijn graph then search for specic bubbles that match 2k+2 cycles where K is the k-mer size of the assembled genome.  2K+2 cycles have high prediction rate to be potential SNPs [3].
