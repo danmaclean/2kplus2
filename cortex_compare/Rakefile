@@ -1,0 +1,133 @@
+require 'rake/clean'
+
+
+# ENV variables for runs:
+#__CORTEX__
+# k = length of k. Max 95
+# n = hash table width. eg 23
+# b = hash table height. eg 65
+# c = tip clipping length. eg 100
+# s = low coverage node removal, nodes less than this will be removed. eg 1
+# w = depth and path length for bubble search, eg 2,200
+@k = ENV['k'] ||= '25'
+@n = ENV['n'] ||= '23'
+@b = ENV['b'] ||= '65'
+@c = ENV['c'] ||= '100'
+@s = ENV['s'] ||= '1'
+@w = ENV['w'] ||= '1,200'
+
+
+desc "checks you have all binaries in path"
+task :check_kit do
+  blastn = system("command -v blastn"); puts "BLAST+ blastn needed but not found" unless blastn 
+  cortex = system("command -v cortex_bub_95"); puts "cortex_bub compiled at k = 95 needed but not found" unless cortex
+  puts "Found binary pre-reqs." if blastn and cortex
+end
+
+CLEAN.include('tmp/', "db/", "bubbles.log","bubbles.coverage")
+
+desc "makes tmp/ directory"
+directory "tmp"
+
+desc "makes tmp/control_reads.txt reads input file for cortex"
+file "tmp/control_reads.txt" => ["tmp","control_left.fq", "control_right.fq"]  do
+  File.open("tmp/control_reads.txt", "w") do |f|
+    f.puts ["control_left.fq 0", "control_right.fq 0"].join("\n")
+  end
+end
+
+desc "makes tmp/test_reads.txt reads input file for cortex"
+file "tmp/test_reads.txt" => ["tmp", "test_left.fq", "test_right.fq"] do
+  File.open("tmp/test_reads.txt", "w") do |f|
+    f.puts ["test_left.fq 0", "test_right.fq 0"].join("\n")
+  end
+end
+
+desc "runs cortex and makes graph file from tmp/test_reads.txt"
+file "tmp/test.ctx" => ["tmp/test_reads.txt"] do
+  sh "cortex_bub_95 -k #{@k} -n #{@n} -b #{@b} -t fastq -c #{@c} -s #{@s} -i tmp/test_reads.txt -o tmp/test.ctx -l tmp/test.log"
+end
+
+desc "runs cortex and makes graph file from tmp/control_reads.txt"
+file "tmp/control.ctx" => ["tmp/control_reads.txt"] do
+  sh "cortex_bub_95 -k #{@k} -n #{@n} -b #{@b} -t fastq -c #{@c} -s 1 -i tmp/control_reads.txt -o tmp/control.ctx -l tmp/control.log"
+end
+
+desc "makes both ctx graph files"
+task :make_ctx do
+  Rake::Task["tmp/test.ctx"].invoke
+  Rake::Task["tmp/control.ctx"].invoke
+end
+
+desc "makes cortex file of files tmp/ctxlist.txt"
+file "tmp/ctxlist.txt" => ["tmp/control.ctx", "tmp/test.ctx"] do
+    File.open("tmp/ctxlist.txt", "w") do |f|
+      f.puts ["tmp/control.ctx 0", "tmp/test.ctx 1"].join("\n")
+    end
+end
+
+desc "runs cortex_bub"
+file "bubbles.fasta" => ["tmp/control.ctx", "tmp/test.ctx", "tmp/ctxlist.txt"] do
+  sh "cortex_bub_95 -k #{@k} -n #{@n} -b #{@b} -t binary -w #{@w} -i tmp/ctxlist.txt -f bubbles -l bubbles.log"
+end
+
+desc "matches bubbles and known snps by blasting bubbleparse match to original seq"
+file "cortex_bubbles_matched_to_snps.txt" => ["db/reference_genome.fa", "db/reference_genome.fa.nin","db/reference_genome.fa.nsq", "db/reference_genome.fa.nhr","bubbles.fasta" ] do
+  sh "perl lib/check_snps_from_cortex.pl bubbles.fasta > cortex_bubbles_matched_to_snps.txt"
+end
+
+desc "gets TAIR10 reference chr1 from TAIR"
+file "tmp/TAIR10_chr1.fas" => "tmp" do
+  sh "wget ftp://ftp.arabidopsis.org//Sequences/whole_chromosomes/TAIR10_chr1.fas -P tmp/"
+end
+
+desc "gets TAIR10 reference chr2 from TAIR"
+file "tmp/TAIR10_chr2.fas" => "tmp" do 
+  sh "wget ftp://ftp.arabidopsis.org//Sequences/whole_chromosomes/TAIR10_chr2.fas -P tmp/"
+end
+
+desc "gets TAIR10 reference chr3 from TAIR"
+file "tmp/TAIR10_chr3.fas" => "tmp" do 
+  sh "wget ftp://ftp.arabidopsis.org//Sequences/whole_chromosomes/TAIR10_chr3.fas -P tmp/"
+end
+
+desc "gets TAIR10 reference chr4 from TAIR"
+file "tmp/TAIR10_chr4.fas" => "tmp" do
+  sh "wget ftp://ftp.arabidopsis.org//Sequences/whole_chromosomes/TAIR10_chr4.fas -P tmp/"
+end
+
+desc "gets TAIR10 reference chr5 from TAIR"
+file "tmp/TAIR10_chr5.fas" => "tmp" do
+  sh "wget ftp://ftp.arabidopsis.org//Sequences/whole_chromosomes/TAIR10_chr5.fas -P tmp/"
+end
+
+desc "makes db/ directory"
+directory "db"
+
+desc "makes db/reference_genome.fa, the TAIR10 reference"
+file "db/reference_genome.fa" => ["tmp/TAIR10_chr1.fas","tmp/TAIR10_chr2.fas","tmp/TAIR10_chr3.fas","tmp/TAIR10_chr4.fas","tmp/TAIR10_chr5.fas", "db"] do
+    sh "cat tmp/TAIR10_chr1.fas tmp/TAIR10_chr2.fas tmp/TAIR10_chr3.fas tmp/TAIR10_chr4.fas tmp/TAIR10_chr5.fas > db/reference_genome.fa"
+end
+
+file "db/reference_genome.fa.nin" => ["db/reference_genome.fa"] do
+  Rake::Task[:make_blastdb].invoke
+end
+
+file "db/reference_genome.fa.nsq" => ["db/reference_genome.fa"] do
+  Rake::Task[:make_blastdb].invoke
+end
+
+file "db/reference_genome.fa.nhr" => ["db/reference_genome.fa"] do
+  Rake::Task[:make_blastdb].invoke
+end
+
+desc "joins all TAIR arabidopsis chromosome FASTA and makes blast DB"
+task :make_blastdb => "db/reference_genome.fa" do
+  sh "makeblastdb -in db/reference_genome.fa -out db/reference_genome.fa -dbtype nucl"
+end
+
+desc "runs cortex and compares output with reference genome to create cortex list of SNPs"
+task :make_snp_list do
+  Rake::Task["bubbles.fasta"].invoke
+  Rake::Task["cortex_bubbles_matched_to_snps.txt"].invoke
+end
