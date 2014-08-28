@@ -30,9 +30,9 @@ desc "makes tmp/ directory"
 directory "tmp"
 
 desc "makes tmp/control_reads.txt reads input file for cortex"
-file "tmp/control_reads.txt" => ["tmp","control_left.fq", "control_right.fq"]  do
+file "tmp/control_reads.txt" => ["tmp","control.fq"]  do
   File.open("tmp/control_reads.txt", "w") do |f|
-    f.puts ["control_left.fq 0", "control_right.fq 0"].join("\n")
+    f.puts ["control.fq 0"].join("\n")
   end
 end
 

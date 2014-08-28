@@ -16,12 +16,12 @@ The `cortex_compare` is a self-contained directory (i.e you can move and copy it
 
 Check that the package can find your binaries with `rake check_kit`. It will complain if it can't find anything.
 
-We always use Paired End reads, so we assume that you have a left and right read file for both test and control sequencing experiments. Add those (or link them to the `cortex_compare`)
+We always used Paired End reads for the test samples, so we assume that you have a left and right read file for both test and a single file for  control sequencing experiments. Add those (or link them) to the `cortex_compare` directory.
 
 ## Creating the SNP list
 1. `cd cortex_compare`
 2. Add left and right fastq files from the test, rename to `test_left.fq` and `test_right.fq`
-3. Add left and right fastq files from the control, rename to `control_left.fq` and `control_right.fq` 
+3. Add the fastq file from the control, rename to `control.fq`.
 4. Kick off the whole process with `rake make_snp_list` which will run cortex, get the reference genome (Arabidopsis TAIR10) over the internet, run BLAST using the cortex generated contigs against the reference and from this generate the list of SNPs cortex found.
 
 ## Running specific parts of the pipeline
