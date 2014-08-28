@@ -9,7 +9,7 @@ require 'rake/clean'
 # c = tip clipping length. eg 100
 # s = low coverage node removal, nodes less than this will be removed. eg 1
 # w = depth and path length for bubble search, eg 2,200
-@k = ENV['k'] ||= '25'
+@k = ENV['k'] ||= '21'
 @n = ENV['n'] ||= '23'
 @b = ENV['b'] ||= '65'
 @c = ENV['c'] ||= '100'
