@@ -11,3 +11,7 @@
 *.lai
 *.la
 *.a
+
+#mac stuff
+.DS_Store
+
