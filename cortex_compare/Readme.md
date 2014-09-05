@@ -6,15 +6,16 @@ This package runs the cortex con assembler on FASTQ input files from a test and 
 
 You will need:
 
-1. Cortex compiled at k = 95 in the `$PATH` on your system - available on [SourceForge](http://sourceforge.net/projects/cortexassembler/files/cortex_con/cortex_con_beta_0.04c.zip/download)
+1. Cortex compiled at k = 31 in the `$PATH` on your system - available on [SourceForge](http://sourceforge.net/projects/cortexassembler/files/cortex_con/cortex_con_beta_0.04c.zip/download)
 2. NCBI BLAST+ in the `$PATH` on your system - available from [NCBI](http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&DOC_TYPE=Download)
 3. The Ruby `rake` gem, and Ruby > 2.0.0 - install `rake` with `gem install rake`
+4. These experiments will require about 64Gb of memory to complete.
 
 
 
 The `cortex_compare` is a self-contained directory (i.e you can move and copy it wherever you want) that contains a `Rakefile` (kinda like a makefile) that will automate the tasks to generate the list of SNPs found by Cortex, as done in our manuscript. 
 
-Check that the package can find your binaries with `rake check_kit`. It will complain if it can't find anything.
+Check that the package can find your binaries with `rake check_kit`. It will complain if it can't find anything (or the `command` tool isn't installed).
 
 We always used Paired End reads for the test samples, so we assume that you have a left and right read file for both test and a single file for  control sequencing experiments. Add those (or link them) to the `cortex_compare` directory.
 

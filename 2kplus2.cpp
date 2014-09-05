@@ -6,6 +6,25 @@
 //Email        : reda.younsi@sainsbury-laboratory.ac.uk
 //============================================================================
 
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// QuickStart
+//
+// Compilation is straightforward and can be achieved with the following command.
+//
+//    g++ 2kplus2.cpp -o 2kplus2
+//
+// Running
+//
+// Run the program by providing a coloured Cortex [1] .ctx graph file as an argument
+//
+//    2kplus2 graph.ctx
+//
+// [1] De novo assembly and genotyping of variants using colored de Bruijn graphs. 
+// Iqbal Z, Caccamo M, Turner I, Flicek P, McVean G. Nature Genetics. 2012 Feb; 44(2):226-32
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
 #include <iostream>
 #include <fstream>
 #include <string>

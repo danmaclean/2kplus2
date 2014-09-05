@@ -10,8 +10,8 @@ require 'rake/clean'
 # s = low coverage node removal, nodes less than this will be removed. eg 1
 # w = depth and path length for bubble search, eg 2,200
 @k = ENV['k'] ||= '21'
-@n = ENV['n'] ||= '23'
-@b = ENV['b'] ||= '65'
+@n = ENV['n'] ||= '25'
+@b = ENV['b'] ||= '80'
 @c = ENV['c'] ||= '100'
 @s = ENV['s'] ||= '1'
 @w = ENV['w'] ||= '1,200'
@@ -20,7 +20,7 @@ require 'rake/clean'
 desc "checks you have all binaries in path"
 task :check_kit do
   blastn = system("command -v blastn"); puts "BLAST+ blastn needed but not found" unless blastn 
-  cortex = system("command -v cortex_bub_95"); puts "cortex_bub compiled at k = 95 needed but not found" unless cortex
+  cortex = system("command -v cortex_bub_31"); puts "cortex_bub compiled at k = 95 needed but not found" unless cortex
   puts "Found binary pre-reqs." if blastn and cortex
 end
 
@@ -45,12 +45,12 @@ end
 
 desc "runs cortex and makes graph file from tmp/test_reads.txt"
 file "tmp/test.ctx" => ["tmp/test_reads.txt"] do
-  sh "cortex_bub_95 -k #{@k} -n #{@n} -b #{@b} -t fastq -c #{@c} -s #{@s} -i tmp/test_reads.txt -o tmp/test.ctx -l tmp/test.log"
+  sh "cortex_bub_31 -k #{@k} -n #{@n} -b #{@b} -t fastq -c #{@c} -s #{@s} -i tmp/test_reads.txt -o tmp/test.ctx -l tmp/test.log"
 end
 
 desc "runs cortex and makes graph file from tmp/control_reads.txt"
 file "tmp/control.ctx" => ["tmp/control_reads.txt"] do
-  sh "cortex_bub_95 -k #{@k} -n #{@n} -b #{@b} -t fastq -c #{@c} -s 1 -i tmp/control_reads.txt -o tmp/control.ctx -l tmp/control.log"
+  sh "cortex_bub_31 -k #{@k} -n #{@n} -b #{@b} -t fastq -c #{@c} -s 1 -i tmp/control_reads.txt -o tmp/control.ctx -l tmp/control.log"
 end
 
 desc "makes both ctx graph files"
@@ -68,7 +68,7 @@ end
 
 desc "runs cortex_bub"
 file "bubbles.fasta" => ["tmp/control.ctx", "tmp/test.ctx", "tmp/ctxlist.txt"] do
-  sh "cortex_bub_95 -k #{@k} -n #{@n} -b #{@b} -t binary -w #{@w} -i tmp/ctxlist.txt -f bubbles -l bubbles.log"
+  sh "cortex_bub_31 -k #{@k} -n #{@n} -b #{@b} -t binary -w #{@w} -i tmp/ctxlist.txt -f bubbles -l bubbles.log"
 end
 
 desc "matches bubbles and known snps by blasting bubbleparse match to original seq"
